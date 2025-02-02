@@ -1,0 +1,78 @@
+.card {
+  margin: 10px;
+}
+.b {
+  margin: 20px;
+}
+
+.container {
+  margin:40px
+}
+h1 {
+ margin-top : 1rem;
+  font-family: "Anton", serif;
+  display:inline-block;
+border-bottom: 3px solid;
+border-image: linear-gradient(to right, #52D9DF, #69F8CD, #9DF869)1 ;
+padding-bottom: 5px;
+}
+h1:hover {
+ color: #52D9DF
+}
+sidebar {
+  position: fixed;
+  align: left;
+  width: 20%;
+}
+.c {
+  padding:0
+    background-color: rgba(255,255,255,0.3);
+  backdrop-filter: blur(10px);
+}
+
+::-webkit-scrollbar {
+  width:5px
+}
+::-webkit-scrollbar-thumb {
+  background-color: #ADD8E6;
+}
+::-webkit-scrollbar-thumb :hover{
+ background-color: blue;
+}
+.dropdown-menu {
+  list-style:none;
+  padding-left:0
+}
+
+.rating {
+  color: yellow
+}
+.rating :hover {
+ color: white
+}
+
+#footer {
+    padding: 100px 100px 0;
+    text-align: center;
+}
+
+.icons-sm {
+    margin: 10px;
+    color: black;
+    font-size: 2rem;
+}
+
+.i1 i:hover {
+    color: yellow;
+
+}
+
+.i1 i {
+    color: white;
+    margin: 1rem;
+}
+
+#footer p {
+    font-size: 1.5rem;
+}
+

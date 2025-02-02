@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search</title>
+    <link rel="stylesheet" href="./static/style.css">
+    <link rel="icon" href="./static/img/m.png">
+    <script src="https://kit.fontawesome.com/762187f0cf.js" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+<body class="text-center" data-bs-theme="dark">
+{% include "header.html"%}
+
+<div class="container">
+    <div class="input-group mb-3 justify-content-center">
+        {% if s %}
+        <form action="{{url_for('add', s=s)}}" method="post">
+            {% else %}
+            <form action="{{url_for('add')}}" method="post">
+                {% endif %}
+                {% if s=='movie' %}
+                <input type="text" name="movie" placeholder="Movie name">
+                {% elif s=='series' %}
+                <input type="text" name="movie" placeholder="Series name">
+                {% elif s=='actors' %}
+                <input type="text" name="movie" placeholder="Celebrity name">
+                {% else %}
+                <input type="text" name="movie" placeholder="Search name">
+                {% endif %}
+
+                <button class="btn btn-outline-warning " type="submit">Search</button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="{{url_for('add', s='movie')}}">MOVIE</a></li>
+                    <li><a class="dropdown-item" href="{{url_for('add', s='series')}}">SERIES</a></li>
+<!--                    <li><a class="dropdown-item" href="{{url_for('add', s='models')}}">MODELS</a></li>-->
+                    <li><a class="dropdown-item" href="{{url_for('add', s='actors')}}">ACTORS</a></li>
+                    <li><a class="dropdown-item" href="{{url_for('add')}}">ALL</a></li>
+                </ul>
+                <button class="btn btn-outline-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
+                        type="button">Choose Search
+                </button>
+            </form>
+    </div>
+</div>
+<!-- movie search section -->
+
+{% if movie %}
+<div class="container text-center">
+    <div class="row">
+        {% for m in movie[0] %}
+        <div class="col-md-4 col-sm-4 col-lg-4">
+            <div class="card overflow-hidden shadow border-start-0 border-top-0 border-2 border-light ">
+                {% if m[1] and m[1] != nimg %}
+                <img src="{{ m[1] }}" class="card-img-top" alt="Movie image">
+                {% elif m[1] == nimg %}
+                <img src="{{img}}" class="card-img-top" alt="Movie image">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ m[0] }}</h5>
+                    <a href="{{ url_for('add', movie_id=movie[1][loop.index0], media='movie') }}"
+                       class="btn btn-outline-light">Save
+                        Movie</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- multi search section -->
+
+{% if all %}
+<div class="container text-center">
+    <div class="row">
+        {% for m in all %}
+        <div class="col-md-4 col-sm-4 col-lg-4">
+            <div class="card overflow-hidden shadow border-start-0 border-top-0 border-2 border-light ">
+                {% if m[2] and m[2] != nimg %}
+                <img src="{{ m[2] }}" class="card-img-top" alt="Movie image">
+                {% elif m[2] == nimg %}
+                <img src="{{img}}" class="card-img-top" alt="Movie image">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ m[1] }}</h5>
+                    {% if m[3] == "movie" %}
+                    <a href="{{ url_for('add', movie_id=m[0], media='movie') }}" class="btn btn-outline-light">Save</a>
+                    {% elif m[3] == "tv" %}
+                    <a href="{{ url_for('add', movie_id=m[0], media='tv') }}" class="btn btn-outline-light">Save</a>
+                    {% elif m[3] == "pp" %}
+                    <a href="{{ url_for('add', movie_id=m[0], media='pp') }}" class="btn btn-outline-light">Save</a>
+                    {% endif %}
+
+
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- tv section -->
+
+{% if tv %}
+<div class="container text-center">
+    <div class="row">
+        {% for m in tv %}
+        <div class="col-md-4 col-sm-4 col-lg-4">
+            <div class="card overflow-hidden shadow border-start-0 border-top-0 border-2 border-light ">
+                {% if m[1] and m[1] != nimg %}
+                <img src="{{ m[1] }}" class="card-img-top" alt="Movie image">
+                {% elif m[1] == nimg %}
+                <img src="{{img}}" class="card-img-top" alt="Movie image">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ m[0] }}</h5>
+                    <a href="{{ url_for('add', movie_id=m[2], media='tv') }}" class="btn btn-outline-light">Save
+                        Tv</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- actors sections -->
+
+{% if actor %}
+<div class="container text-center">
+    <div class="row">
+        {% for m in actor %}
+        <div class="col-md-4 col-sm-4 col-lg-4">
+            <div class="card overflow-hidden shadow border-start-0 border-top-0 border-2 border-light ">
+                {% if m[1] and m[1] != nimg %}
+                <img src="{{ m[1] }}" class="card-img-top" alt="Movie image">
+                {% elif m[1] == nimg %}
+                <img src="{{img}}" class="card-img-top" alt="Movie image">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ m[0] }}</h5>
+                    <a href="{{ url_for('add', movie_id=m[2], media='pp') }}" class="btn btn-outline-light">Save
+                        Actor</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="text-center container ">
+        <nav aria-label="...">
+            <ul class="pagination pagination-sm justify-content-center">
+                <li class="page-item" aria-current="page">
+                    <a href="{{ url_for('add',s='actors', page=1, name=name)  }}" class="page-link">1</a>
+                </li>
+                <li class="page-item"><a class="page-link"
+                                         href="{{ url_for('add',s='actors', page=2, name=name)  }}">2</a></li>
+                <li class="page-item"><a class="page-link"
+                                         href="{{ url_for('add',s='actors', page=3, name=name)  }}">3</a></li>
+            </ul>
+        </nav>
+    </div>
+
+</div>
+
+<!-- filling empty space -->
+{% else %}
+<h1 style="margin:100px">use choose search to get accurate results </h1>
+{% endif %}
+
+{% include "footer.html"%}
+
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+        integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+        crossorigin="anonymous"></script>
+</body>
+</html>
