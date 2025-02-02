@@ -95,7 +95,7 @@ class MovieForm(FlaskForm):
 @app.route("/")
 @login_required
 def main():
-    return redirect(url_for("discover", page=1))
+    return redirect(url_for("discover", page=1 ,content="movie"))
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -125,14 +125,44 @@ def add():
         if request.args.get("s") == "movie":
             if request.method == "POST":
                 movie_name = request.form.get("movie")
-                movie_data = api_movie.search_movies(movie_name)
-                return render_template("search.html", s="movie", movie=movie_data, nimg=NIMG, img=IMG)
+                if request.args.get("page"):
+                    page = request.args.ge('page')
+                    movie_data = api_movie.search_movies(movie_name, page)
+                    return render_template("search.html", page=page, name=movie_name, s="movie", movie=movie_data,
+                                           nimg=NIMG, img=IMG)
+                else:
+                    page = 1
+                    movie_data = api_movie.search_movies(movie_name, page)
+                    return render_template("search.html", page=page, name=movie_name, s="movie", movie=movie_data,
+                                           nimg=NIMG, img=IMG)
+            elif "name" and "page" in request.args:
+                page = request.args.get("page")
+                movie_name = request.args.get("name")
+                movie_data = api_movie.search_movies(movie_name, page)
+                return render_template("search.html", page=page, name=movie_name, s="movie", movie=movie_data,
+                                       nimg=NIMG, img=IMG)
+
             return render_template("search.html", s="movie")
         elif request.args.get("s") == "series":
             if request.method == "POST":
                 tv_name = request.form.get("movie")
-                tv_data = api_movie.search_tv(tv_name)
-                return render_template("search.html", s="series", tv=tv_data, nimg=NIMG, img=IMG)
+                if "page" in request.args:
+                    page = int(request.args.get("page"))
+                    tv_data = api_movie.search_tv(tv_name, page)
+                    return render_template("search.html", name=tv_name, page=page, s="series", tv=tv_data, nimg=NIMG,
+                                           img=IMG)
+                else:
+                    page = 1
+                    tv_data = api_movie.search_tv(tv_name, page)
+                    return render_template("search.html", name=tv_name, page=page, s="series", tv=tv_data, nimg=NIMG,
+                                           img=IMG)
+            elif "page" and "name" in request.args:
+                page = int(request.args.get("page"))
+                tv_name = request.args.get("name")
+                tv_data = api_movie.search_tv(tv_name, page)
+                return render_template("search.html", name=tv_name, page=page, s="series", tv=tv_data, nimg=NIMG,
+                                       img=IMG)
+
             return render_template("search.html", s="series")
         elif request.args.get("s") == "actors":
             if request.method == "POST":
@@ -158,8 +188,21 @@ def add():
     else:
         if request.method == "POST":
             search = request.form.get("movie")
-            search_data = api_movie.search_all(search)
-            return render_template("search.html", all=search_data, img=IMG, nimg=NIMG)
+            if "page" in request.args:
+                page = int(request.args.get("page"))
+                search_data = api_movie.search_all(search, page)
+                return render_template("search.html", name=search, page=page, all=search_data, img=IMG, nimg=NIMG)
+
+            else:
+                page = 1
+                search_data = api_movie.search_all(search, page)
+                return render_template("search.html", name=search, page=page, all=search_data, img=IMG, nimg=NIMG)
+
+        elif "page" and "name" in request.args:
+            page = int(request.args.get("page"))
+            search = request.args.get("name")
+            search_data = api_movie.search_all(search, page)
+            return render_template("search.html", name=search, page=page, all=search_data, img=IMG, nimg=NIMG)
 
     """ adding methods """
     if "movie_id" in request.args:
@@ -187,13 +230,48 @@ def add():
     return render_template("search.html", nimg=NIMG, img=IMG)
 
 
-@app.route("/discover/<page>")
+@app.route("/discover/<content>/<int:page>")
 @login_required
-def discover(page):
+def discover(page, content):
     if page is None:
         page = 1
-    data = api_movie.discover_movies(page)
-    return render_template("index.html", page=page, movies=data, nimg=NIMG, img=IMG)
+    if content is None:
+        content="movie"
+
+    if content== "movie":
+        data = api_movie.discover_movies(page)
+        content = "movie"
+    else :
+        data = api_movie.discover_tv(page)
+        content = "tv"
+
+
+    if "nav" in request.args:
+        if request.args.get("nav") == "back":
+            if page in range(0,11):
+                page = 1
+                start = 1
+                end = 11
+                r = range(start, end)
+                return redirect(url_for("discover", r=r,content=content, page=page))
+            else:
+                page = page - 10
+                start= page - 10
+                end =  page
+                r = range(start, end)
+                return redirect(url_for("discover", r=r, content=content, page=page))
+        else:
+            page = page +1
+            start = page +1
+            end = page + 11
+            r = range(start, end)
+            return redirect(url_for("discover", r=r, page=page, content=content))
+    else:
+        start = page
+        end = page+10
+
+    r = range(start,end)
+    return render_template("index.html", r=r, page=page, content=content, movies=data, nimg=NIMG, img=IMG)
 
 
 @app.route("/movies")

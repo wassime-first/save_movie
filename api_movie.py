@@ -16,13 +16,13 @@ headers = {
 }
 
 
-def search_tv(title: str):
+def search_tv(title, page):
     url_searsh = "https://api.themoviedb.org/3/search/tv"
     params = {
         "query": title,
         # "api_key": api_key,
         "language": "en-US",
-        "page": 1,
+        "page": page,
         "include_adult": True,
     }
 
@@ -45,24 +45,22 @@ def tv_data(id):
     return (title, release_date, img_url)
 
 
-def search_movies(title: str):
+def search_movies(title, page):
     url_searsh = "https://api.themoviedb.org/3/search/movie"
     params = {
         "query": title,
         # "api_key": api_key,
         "language": "en-US",
-        "page": 1,
+        "page": page,
         "include_adult": True,
     }
 
     response_search = requests.get(url_searsh, headers=headers, params=params)
     data = response_search.json()
     movies_list = []
-    movie_id_list = []
     for title in data["results"]:
-        movies_list.append((f"{title['title']} -  {title['release_date']}", f"{IMG_LINK}{title['backdrop_path']}"))
-        movie_id_list.append(title["id"])
-    return (movies_list, movie_id_list)
+        movies_list.append((f"{title['title']}-{title['release_date']}", f"{IMG_LINK}{title['backdrop_path']}",title["id"]))
+    return (movies_list)
 
 
 def movie_data(id):
@@ -76,13 +74,13 @@ def movie_data(id):
     return (title, release_date, overview, img_url)
 
 
-def search_all(title):
+def search_all(title, page):
     url_all = "https://api.themoviedb.org/3/search/multi"
     params = {
         "query": title,
         # "api_key": api_key,
         "language": "en-US",
-        "page": 1,
+        "page": page,
         "include_adult": True,
     }
     response_all = requests.get(url=url_all, headers=headers, params=params)
@@ -90,12 +88,8 @@ def search_all(title):
     all_results = []
     for i in data["results"]:
         try:
-            if i["known_for"][0]["poster_path"]:
-                add = (i["id"], i["name"], f'{IMG_LINK}{i["known_for"][0]["poster_path"]}', "pp")
-                all_results.append(add)
-            else:
-                add = (i["id"], i["name"], f'{IMG_LINK}{i["known_for"][0]["backdrop_path"]}', "pp")
-                all_results.append(add)
+            add = (i["id"], i["name"], f'{IMG_LINK}{i["profile_path"]}', "pp")
+            all_results.append(add)
         except IndexError:
             add = (i["id"], i["name"], f'{IMG}', "pp")
             all_results.append(add)
@@ -138,7 +132,7 @@ def ppl_data(id):
 
 
 def discover_movies(page):
-    url = f"https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page={page}&sort_by=popularity.desc"
+    url = f"https://api.themoviedb.org/3/discover/movie?include_adult=true&include_video=false&language=en-US&page={page}&sort_by=popularity.desc"
     response = requests.get(url=url, headers=headers)
     data = response.json()
     dicovery_list = []
@@ -147,7 +141,21 @@ def discover_movies(page):
         id = i["id"]
         rating = i["vote_average"]
         img = f'{IMG_LINK}{i["backdrop_path"]}'
-        d = (title, img, id, rating)
+        d = (title, img, id, rating, "movie")
+        dicovery_list.append(d)
+    return dicovery_list
+
+def discover_tv(page):
+    url = f"https://api.themoviedb.org/3/discover/tv?include_adult=true&include_video=false&language=en-US&page={page}&sort_by=popularity.desc"
+    response = requests.get(url=url, headers=headers)
+    data = response.json()
+    dicovery_list = []
+    for i in data["results"]:
+        title = i["name"]
+        id = i["id"]
+        rating = i["vote_average"]
+        img = f'{IMG_LINK}{i["backdrop_path"]}'
+        d = (title, img, id, rating, "tv")
         dicovery_list.append(d)
     return dicovery_list
 
