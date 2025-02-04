@@ -237,7 +237,7 @@
     <div class="text-center container ">
         <nav aria-label="...">
             <ul class="pagination pagination-sm justify-content-center">
-                {% if page == 13 %}
+                {% if page in range(13,24) %}
                     {% for i in range(13,25) %}
 
                 <li class="page-item" aria-current="page">
@@ -248,7 +248,7 @@
                        {% endif %}
                 </li>
                     {% endfor %}
-                 {% elif page == 24 %}
+                 {% elif page in range(24,36)  %}
                     {% for i in range(24,36) %}
                     <li class="page-item" aria-current="page">
                          {% if page == i %}
