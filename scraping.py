@@ -96,19 +96,30 @@ def search_offline(data, search, page):
                 if b[0] == a[0]:
                     test = True
 
-        if (search.lower() not in split_name) and test == False:
-            pass
-        else:
-
+        if (search.lower()  in split_name):
             name = i[0]
             url = i[1]
             p = p
             if c == 10:
-                p+=1
-                c=1
+                p += 1
+                c = 1
             else:
                 c += 1
             p_list.append((name, url, p))
+        elif test and  (search.lower() not in split_name):
+            name = i[0]
+            url = i[1]
+            p = p
+            if c == 10:
+                p += 1
+                c = 1
+            else:
+                c += 1
+            p_list.append((name, url, p))
+        else:
+            pass
+
+
     requested_data = []
     p = 1
     c = 1

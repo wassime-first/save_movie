@@ -171,80 +171,110 @@
 <!-- actors sections -->
 
 {% if actor %}
-    <div class="container text-center">
-        <div class="row">
-            {% for m in actor %}
-                <div class="col-md-4 col-sm-4 col-lg-4">
-                    <div class="card overflow-hidden shadow border-start-0 border-top-0 border-2 border-light">
-                        <!-- Check if m[1] exists and is not equal to nimg -->
-                        {% if m[1] and m[1] != nimg %}
-                            <img src="{{ m[1] }}" class="card-img-top" alt="Movie image">
-                        {% elif m[1] == nimg %}
-                            <img src="{{ img }}" class="card-img-top" alt="Movie image">
-                        {% endif %}
-                        <div class="card-body">
-                            <h5 class="card-title">{{ m[0] }}</h5>
-                            <a href="{{ url_for('add', movie_id=m[2], media='pp') }}" class="btn btn-outline-light">Save Actor</a>
-                        </div>
-                    </div>
+<div class="container text-center">
+    <div class="row">
+        {% for m in actor %}
+        <div class="col-md-4 col-sm-4 col-lg-4">
+            <div class="card overflow-hidden shadow border-start-0 border-top-0 border-2 border-light">
+                <!-- Check if m[1] exists and is not equal to nimg -->
+                {% if m[1] and m[1] != nimg %}
+                <img src="{{ m[1] }}" class="card-img-top" alt="Movie image">
+                {% elif m[1] == nimg %}
+                <img src="{{ img }}" class="card-img-top" alt="Movie image">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ m[0] }}</h5>
+                    <a href="{{ url_for('add', movie_id=m[2], media='pp') }}" class="btn btn-outline-light">Save
+                        Actor</a>
                 </div>
-            {% endfor %}
+            </div>
         </div>
-        <!-- Pagination -->
-        <div class="text-center container">
-            <nav aria-label="...">
-                <ul class="pagination pagination-sm justify-content-center">
-                    <li class="page-item" aria-current="page">
-                        <a href="{{ url_for('add', s='actors', page=1, name=name) }}" class="page-link">1</a>
-                    </li>
-                    <li class="page-item">
-                        <a href="{{ url_for('add', s='actors', page=2, name=name) }}" class="page-link">2</a>
-                    </li>
-                    <li class="page-item">
-                        <a href="{{ url_for('add', s='actors', page=3, name=name) }}" class="page-link">3</a>
-                    </li>
-                    <li class="page-item">
-                        <a href="{{ url_for('add', s='actors', page=4, name=name) }}" class="page-link">4</a>
-                    </li>
-                    <li class="page-item">
-                        <a href="{{ url_for('add', s='actors', page=5, name=name) }}" class="page-link">5</a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
+        {% endfor %}
     </div>
+    <!-- Pagination -->
+    <div class="text-center container">
+        <nav aria-label="...">
+            <ul class="pagination pagination-sm justify-content-center">
+                <li class="page-item" aria-current="page">
+                    <a href="{{ url_for('add', s='actors', page=1, name=name) }}" class="page-link">1</a>
+                </li>
+                <li class="page-item">
+                    <a href="{{ url_for('add', s='actors', page=2, name=name) }}" class="page-link">2</a>
+                </li>
+                <li class="page-item">
+                    <a href="{{ url_for('add', s='actors', page=3, name=name) }}" class="page-link">3</a>
+                </li>
+                <li class="page-item">
+                    <a href="{{ url_for('add', s='actors', page=4, name=name) }}" class="page-link">4</a>
+                </li>
+                <li class="page-item">
+                    <a href="{{ url_for('add', s='actors', page=5, name=name) }}" class="page-link">5</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
 {% endif %}
 <!--  models search section  -->
 
-    {% if models %}
-    <div class="container text-center">
-        <div class="row">
-            {% for m in models %}
-            <div class="col-md-4 col-sm-4 col-lg-4">
-                <div class="card overflow-hidden shadow border-start-0 border-top-0 border-2 border-light ">
-                    <img src="{{ m[1] }}" class="card-img-top" alt="Movie image">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ m[0] }}</h5>
-                        <a href="{{ url_for('add', movie_id=1, media='model',n=m[0],u=m[1]) }}" class="btn btn-outline-light">Save
-                            babe</a>
-                    </div>
+{% if models %}
+<div class="container text-center">
+    <div class="row">
+        {% for m in models %}
+        <div class="col-md-4 col-sm-4 col-lg-4">
+            <div class="card overflow-hidden shadow border-start-0 border-top-0 border-2 border-light ">
+                <img src="{{ m[1] }}" class="card-img-top" alt="Movie image">
+                <div class="card-body">
+                    <h5 class="card-title">{{ m[0] }}</h5>
+                    <a href="{{ url_for('add', movie_id=1, media='model',n=m[0],u=m[1]) }}"
+                       class="btn btn-outline-light">Save
+                        babe</a>
                 </div>
             </div>
-            {% endfor %}
         </div>
-        <div class="text-center container ">
-            <nav aria-label="...">
-                <ul class="pagination pagination-sm justify-content-center">
+        {% endfor %}
+    </div>
+    <div class="text-center container ">
+        <nav aria-label="...">
+            <ul class="pagination pagination-sm justify-content-center">
+                {% if page == 13 %}
+                    {% for i in range(13,25) %}
+
+                <li class="page-item" aria-current="page">
+                       {% if page == i %}
+                    <a href="{{ url_for('add',s='model', page=i, name=name)  }}" class="page-link active">{{i}}</a>
+                       {% else %}
+                    <a href="{{ url_for('add',s='model', page=i, name=name)  }}" class="page-link">{{i}}</a>
+                       {% endif %}
+                </li>
+                    {% endfor %}
+                 {% elif page == 24 %}
+                    {% for i in range(24,36) %}
+                    <li class="page-item" aria-current="page">
+                         {% if page == i %}
+                    <a href="{{ url_for('add',s='model', page=i, name=name)  }}" class="page-link active">{{i}}</a>
+                         {% else %}
+                    <a href="{{ url_for('add',s='model', page=i, name=name)  }}" class="page-link">{{i}}</a>
+                         {% endif %}
+                       </li>
+                    {% endfor %}
+                {% else %}
                     {% for i in range(1,14) %}
                     <li class="page-item" aria-current="page">
-                        <a href="{{ url_for('add',s='model', page=i, name=name)  }}" class="page-link">{{i}}</a>
-                    </li>
+                         {% if page == i %}
+                    <a href="{{ url_for('add',s='model', page=i, name=name)  }}" class="page-link active">{{i}}</a>
+                         {% else %}
+                    <a href="{{ url_for('add',s='model', page=i, name=name)  }}" class="page-link">{{i}}</a>
+                         {% endif %}
+                       </li>
                     {% endfor %}
-                </ul>
-            </nav>
-        </div>
+                 {% endif %}
+
+            </ul>
+        </nav>
     </div>
-    {% endif %}
+</div>
+{% endif %}
 
 </div>
 
