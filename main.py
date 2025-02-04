@@ -9,6 +9,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import api_movie
 import os
 from dotenv import load_dotenv
+import scraping
+from urllib.parse import unquote
+
+all_porn_stars = scraping.all_porn_stars()
 
 load_dotenv()
 DB_URI = os.getenv("DB_URI")
@@ -95,7 +99,7 @@ class MovieForm(FlaskForm):
 @app.route("/")
 @login_required
 def main():
-    return redirect(url_for("discover", page=1 ,content="movie"))
+    return redirect(url_for("discover", page=1, content="movie"))
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -184,7 +188,26 @@ def add():
             return render_template("search.html", s="actors")
 
 
-
+        elif request.args.get("s") == "model":
+            if request.method == "POST":
+                model_name = request.form.get("movie")
+                if request.args.get("page"):
+                    page = int(request.args.get('page'))
+                    movie_data = scraping.search_offline(all_porn_stars, model_name, page)
+                    return render_template("search.html", page=page, name=model_name, s="model", models=movie_data,
+                                           nimg=NIMG, img=IMG)
+                else:
+                    page = 1
+                    movie_data = scraping.search_offline(all_porn_stars, model_name, page)
+                    return render_template("search.html", page=page, name=model_name, s="model", models=movie_data,
+                                           nimg=NIMG, img=IMG)
+            elif "name" in request.args and "page" in request.args:
+                page = int(request.args.get("page"))
+                model_name = request.args.get("name")
+                movie_data = scraping.search_offline(all_porn_stars, model_name, page)
+                return render_template("search.html", page=page, name=model_name, s="model", models=movie_data,
+                                       nimg=NIMG, img=IMG)
+            return render_template("search.html", s="model")
     else:
         if request.method == "POST":
             search = request.form.get("movie")
@@ -227,6 +250,14 @@ def add():
             db.session.add(new_movie)
             db.session.commit()
             return redirect("/")
+
+        elif request.args.get("media") == "model":
+            model_name = unquote(request.args.get('n'))
+            model_url = request.args.get("u")
+            new_movie = Model(name=model_name, url=model_url, user_id=current_user.id)
+            db.session.add(new_movie)
+            db.session.commit()
+            return redirect("/")
     return render_template("search.html", nimg=NIMG, img=IMG)
 
 
@@ -236,41 +267,43 @@ def discover(page, content):
     if page is None:
         page = 1
     if content is None:
-        content="movie"
+        content = "movie"
 
-    if content== "movie":
+    if content == "movie":
         data = api_movie.discover_movies(page)
         content = "movie"
-    else :
+    elif content == "tv":
         data = api_movie.discover_tv(page)
         content = "tv"
-
+    else:
+        data = scraping.all_porn_stars(page)
+        content = "model"
 
     if "nav" in request.args:
         if request.args.get("nav") == "back":
-            if page in range(0,11):
+            if page in range(0, 11):
                 page = 1
                 start = 1
                 end = 11
                 r = range(start, end)
-                return redirect(url_for("discover", r=r,content=content, page=page))
+                return redirect(url_for("discover", r=r, content=content, page=page))
             else:
                 page = page - 10
-                start= page - 10
-                end =  page
+                start = page - 10
+                end = page
                 r = range(start, end)
                 return redirect(url_for("discover", r=r, content=content, page=page))
         else:
-            page = page +1
-            start = page +1
+            page = page + 1
+            start = page + 1
             end = page + 11
             r = range(start, end)
             return redirect(url_for("discover", r=r, page=page, content=content))
     else:
         start = page
-        end = page+10
+        end = page + 10
 
-    r = range(start,end)
+    r = range(start, end)
     return render_template("index.html", r=r, page=page, content=content, movies=data, nimg=NIMG, img=IMG)
 
 
@@ -308,6 +341,18 @@ def actor():
         db.session.commit()
         return redirect("/actors")
     return render_template("movies.html", actor=all_actors)
+
+
+@app.route("/models")
+@login_required
+def model():
+    all_models = db.session.query(Model).filter(Model.user_id == current_user.id).all()
+    if "movie_id" in request.args:
+        deleted_movie = db.session.query(Model).filter(Model.id == request.args.get("movie_id")).first()
+        db.session.delete(deleted_movie)
+        db.session.commit()
+        return redirect("/models")
+    return render_template("movies.html", model=all_models)
 
 
 @app.route("/logout")

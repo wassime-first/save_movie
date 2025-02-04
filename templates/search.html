@@ -29,6 +29,8 @@
                 <input type="text" name="movie" placeholder="Series name">
                 {% elif s=='actors' %}
                 <input type="text" name="movie" placeholder="Celebrity name">
+                {% elif s=='model' %}
+                <input type="text" name="movie" placeholder="name model">
                 {% else %}
                 <input type="text" name="movie" placeholder="Search name">
                 {% endif %}
@@ -37,7 +39,7 @@
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item" href="{{url_for('add', s='movie')}}">MOVIE</a></li>
                     <li><a class="dropdown-item" href="{{url_for('add', s='series')}}">SERIES</a></li>
-                    <!--                    <li><a class="dropdown-item" href="{{url_for('add', s='models')}}">MODELS</a></li>-->
+                    <li><a class="dropdown-item" href="{{url_for('add', s='model')}}">MODELS</a></li>
                     <li><a class="dropdown-item" href="{{url_for('add', s='actors')}}">ACTORS</a></li>
                     <li><a class="dropdown-item" href="{{url_for('add')}}">ALL</a></li>
                 </ul>
@@ -45,6 +47,7 @@
                         type="button">Choose Search
                 </button>
             </form>
+        </form>
     </div>
 </div>
 <!-- movie search section -->
@@ -78,7 +81,7 @@
                     <a href="{{ url_for('add',s='movie', page=i, name=name)  }}" class="page-link">{{i}}</a>
                 </li>
                 {% endfor %}
-
+            </ul>
         </nav>
     </div>
 
@@ -122,7 +125,7 @@
                     <a href="{{ url_for('add', page=i, name=name)  }}" class="page-link">{{i}}</a>
                 </li>
                 {% endfor %}
-
+            </ul>
         </nav>
     </div>
 </div>
@@ -159,7 +162,7 @@
                     <a href="{{ url_for('add',s='series', page=i, name=name)  }}" class="page-link">{{i}}</a>
                 </li>
                 {% endfor %}
-
+            </ul>
         </nav>
     </div>
 </div>
@@ -168,48 +171,85 @@
 <!-- actors sections -->
 
 {% if actor %}
-<div class="container text-center">
-    <div class="row">
-        {% for m in actor %}
-        <div class="col-md-4 col-sm-4 col-lg-4">
-            <div class="card overflow-hidden shadow border-start-0 border-top-0 border-2 border-light ">
-                {% if m[1] and m[1] != nimg %}
-                <img src="{{ m[1] }}" class="card-img-top" alt="Movie image">
-                {% elif m[1] == nimg %}
-                <img src="{{img}}" class="card-img-top" alt="Movie image">
-                {% endif %}
-                <div class="card-body">
-                    <h5 class="card-title">{{ m[0] }}</h5>
-                    <a href="{{ url_for('add', movie_id=m[2], media='pp') }}" class="btn btn-outline-light">Save
-                        Actor</a>
+    <div class="container text-center">
+        <div class="row">
+            {% for m in actor %}
+                <div class="col-md-4 col-sm-4 col-lg-4">
+                    <div class="card overflow-hidden shadow border-start-0 border-top-0 border-2 border-light">
+                        <!-- Check if m[1] exists and is not equal to nimg -->
+                        {% if m[1] and m[1] != nimg %}
+                            <img src="{{ m[1] }}" class="card-img-top" alt="Movie image">
+                        {% elif m[1] == nimg %}
+                            <img src="{{ img }}" class="card-img-top" alt="Movie image">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ m[0] }}</h5>
+                            <a href="{{ url_for('add', movie_id=m[2], media='pp') }}" class="btn btn-outline-light">Save Actor</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <!-- Pagination -->
+        <div class="text-center container">
+            <nav aria-label="...">
+                <ul class="pagination pagination-sm justify-content-center">
+                    <li class="page-item" aria-current="page">
+                        <a href="{{ url_for('add', s='actors', page=1, name=name) }}" class="page-link">1</a>
+                    </li>
+                    <li class="page-item">
+                        <a href="{{ url_for('add', s='actors', page=2, name=name) }}" class="page-link">2</a>
+                    </li>
+                    <li class="page-item">
+                        <a href="{{ url_for('add', s='actors', page=3, name=name) }}" class="page-link">3</a>
+                    </li>
+                    <li class="page-item">
+                        <a href="{{ url_for('add', s='actors', page=4, name=name) }}" class="page-link">4</a>
+                    </li>
+                    <li class="page-item">
+                        <a href="{{ url_for('add', s='actors', page=5, name=name) }}" class="page-link">5</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+{% endif %}
+<!--  models search section  -->
+
+    {% if models %}
+    <div class="container text-center">
+        <div class="row">
+            {% for m in models %}
+            <div class="col-md-4 col-sm-4 col-lg-4">
+                <div class="card overflow-hidden shadow border-start-0 border-top-0 border-2 border-light ">
+                    <img src="{{ m[1] }}" class="card-img-top" alt="Movie image">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ m[0] }}</h5>
+                        <a href="{{ url_for('add', movie_id=1, media='model',n=m[0],u=m[1]) }}" class="btn btn-outline-light">Save
+                            babe</a>
+                    </div>
                 </div>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
+        <div class="text-center container ">
+            <nav aria-label="...">
+                <ul class="pagination pagination-sm justify-content-center">
+                    {% for i in range(1,14) %}
+                    <li class="page-item" aria-current="page">
+                        <a href="{{ url_for('add',s='model', page=i, name=name)  }}" class="page-link">{{i}}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </nav>
+        </div>
     </div>
-    <div class="text-center container ">
-        <nav aria-label="...">
-            <ul class="pagination pagination-sm justify-content-center">
-                <li class="page-item" aria-current="page">
-                    <a href="{{ url_for('add',s='actors', page=1, name=name)  }}" class="page-link">1</a>
-                </li>
-                <li class="page-item"><a class="page-link"
-                                         href="{{ url_for('add',s='actors', page=2, name=name)  }}">2</a></li>
-                <li class="page-item"><a class="page-link"
-                                         href="{{ url_for('add',s='actors', page=3, name=name)  }}">3</a></li>
-
-                <li class="page-item"><a class="page-link"
-                                         href="{{ url_for('add',s='actors', page=4, name=name)  }}">4</a></li>
-                <li class="page-item"><a class="page-link"
-                                         href="{{ url_for('add',s='actors', page=5, name=name)  }}">5</a></li>
-            </ul>
-        </nav>
-    </div>
+    {% endif %}
 
 </div>
-{% endif %}
+
 <!-- filling empty space -->
-{% if not movie and not actor and not tv and not all %}
+{% if not movie and not actor and not tv and not all and not models %}
 <h1 style="margin:100px">use choose search to get accurate results </h1>
 {% endif %}
 

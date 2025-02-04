@@ -17,6 +17,8 @@
     <title>My Celeb</title>
     {% elif tv%}
     <title>My Tv</title>
+    {% else %}
+    <title>My +18</title>
 
     {% endif %}
 
@@ -31,52 +33,58 @@
     <div class="row">
 
         <!--    movie section    -->
-
         {% if movies %}
         {% for m in movies %}
         <div class="col-md-4 col-sm-4 col-lg-4">
-            <div class="card overflow-hidden shadow border-start-0 border-top-0 border-2 border-light ">
+            <div class="card overflow-hidden shadow border-start-0 border-top-0 border-2 border-light">
                 <img src="{{ m.url }}" class="card-img-top" alt="test">
                 <div class="card-body">
-                    <h5 class="card-title">{{m.name}}</h5>
+                    <h5 class="card-title">{{ m.name }}</h5>
                     <a href="{{ url_for('movie', movie_id=m.id) }}" class="btn btn-outline-danger">Delete</a>
                 </div>
             </div>
         </div>
         {% endfor %}
-
-        <!--   tv section    -->
-
+        <!--      tv section  >-->
         {% elif tv %}
         {% for m in tv %}
         <div class="col-md-4 col-sm-4 col-lg-3">
-            <div class="card overflow-hidden shadow border-start-0 border-top-0 border-2 border-light ">
+            <div class="card overflow-hidden shadow border-start-0 border-top-0 border-2 border-light">
                 <img src="{{ m.url }}" class="card-img-top" alt="test">
                 <div class="card-body">
-                    <h5 class="card-title">{{m.name}}</h5>
+                    <h5 class="card-title">{{ m.name }}</h5>
                     <a href="{{ url_for('tv', movie_id=m.id) }}" class="btn btn-outline-danger">Delete</a>
                 </div>
             </div>
         </div>
         {% endfor %}
-
-
-        <!--    actors section    -->
+        <!--     acrot section   -->
         {% elif actor %}
         {% for m in actor %}
         <div class="col-md-4 col-sm-4 col-lg-4">
-            <div class="card overflow-hidden shadow border-start-0 border-top-0 border-2 border-light ">
+            <div class="card overflow-hidden shadow border-start-0 border-top-0 border-2 border-light">
                 <img src="{{ m.url }}" class="card-img-top" alt="test">
                 <div class="card-body">
-                    <h5 class="card-title">{{m.name}}</h5>
+                    <h5 class="card-title">{{ m.name }}</h5>
                     <a href="{{ url_for('actor', movie_id=m.id) }}" class="btn btn-outline-danger">Delete</a>
                 </div>
             </div>
         </div>
         {% endfor %}
-
+        <!--      +18 section   -->
+        {% elif model %}
+        {% for m in model %}
+        <div class="col-md-4 col-sm-4 col-lg-4">
+            <div class="card overflow-hidden shadow border-start-0 border-top-0 border-2 border-light">
+                <img src="{{ m.url }}" class="card-img-top" alt="model img">
+                <div class="card-body">
+                    <h5 class="card-title">{{ m.name }}</h5>
+                    <a href="{{ url_for('model', movie_id=m.id) }}" class="btn btn-outline-danger">Delete</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
         {% endif %}
-
     </div>
 
 </div>

@@ -22,9 +22,10 @@
 <!-- choose movie or tv  -->
 
 <nav class="nav justify-content-center">
+    <a class="nav-link" href="{{ url_for('discover',page=page, content='movie') }}">Movies</a>
+    <a class="nav-link" href="{{ url_for('discover', page=page, content='tv') }}">Tv</a>
+    <a class="nav-link" href="{{ url_for('discover', page=page, content='model') }}">+18</a>
 
-  <a class="nav-link" href="{{ url_for('discover',page=page, content='movie') }}">Movies</a>
-  <a class="nav-link" href="{{ url_for('discover', page=page, content='tv') }}">Tv</a>
 </nav>
 
 
@@ -40,8 +41,13 @@
                 <img src="{{img}}" class="card-img-top" alt="Movie image">
                 {% endif %}
                 <div class="card-body">
-                    <h5 class="card-title">{{m[0]}} '<span class="rating"><b>{{m[3]}}</b></span>'</h5>
-                    <a href="{{ url_for('add', movie_id=m[2], media=m[4]) }}" class="btn btn-outline-light">Save</a>
+                   {% if request.path.startswith("/discover/model/")    %}
+                    <h5 class="card-title">{{m[0]}}</h5>
+                    <a href="{{ url_for('add', media='model', movie_id=2, n=m[0], u=m[1]) }}" class="btn btn-outline-light">Save</a>
+                   {% else %}
+                    <h5 class="card-title">{{m[0]}}<span class="rating" ><b> '{{m[3]}}'</b></span></h5>
+                    <a href="{{ url_for('add', media=m[4], movie_id=m[2]) }}" class="btn btn-outline-light">Save</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -49,24 +55,27 @@
 
     </div>
 
-<!--  navigation  -->
+    <!--  navigation  -->
 
     <div class="text-center container ">
         <nav aria-label="...">
             <ul class="pagination pagination-sm justify-content-center">
                 <li class="page-item "><a class="page-link"
-                                                href="{{ url_for('discover', content=content, page= page, nav='back')  }}">{{"<<"}}Back</a></li>
+                                          href="{{ url_for('discover', content=content, page= page, nav='back')  }}">{{"<<"}}Back</a>
+                </li>
                 {% for i in r %}
-                {% if i == page  %}
+                {% if i == page %}
                 <li class="page-item active"><a class="page-link"
-                                                href="{{ url_for('discover', content=content, page=i)  }}">{{i}}</a></li>
+                                                href="{{ url_for('discover', content=content, page=i)  }}">{{i}}</a>
+                </li>
                 {% else %}
                 <li class="page-item"><a class="page-link"
-                                                href="{{ url_for('discover', content=content, page=i)  }}">{{i}}</a></li>
+                                         href="{{ url_for('discover', content=content, page=i)  }}">{{i}}</a></li>
                 {% endif %}
                 {% endfor %}
                 <li class="page-item active"><a class="page-link"
-                                                href="{{ url_for('discover', content=content,page = page, nav='next')  }}">Next{{">>"}}</a></li>
+                                                href="{{ url_for('discover', content=content,page = page, nav='next')  }}">Next{{">>"}}</a>
+                </li>
             </ul>
         </nav>
     </div>
