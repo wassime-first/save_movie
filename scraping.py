@@ -111,7 +111,7 @@ def search_offline(data, search, page):
         for i in full_world_list:
             p_list.append(i)
         for i in one_character_list:
-            p_list.append(one_character_list)
+            p_list.append(i)
     requested_data = []
     p = 1
     c = 1
