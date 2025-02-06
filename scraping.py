@@ -78,6 +78,8 @@ def all_p():
 
 def search_offline(data, search, page):
     p_list = []
+    full_world_list = []
+    one_character_list = []
     p = 1
     c = 1
     for i in data:
@@ -99,27 +101,17 @@ def search_offline(data, search, page):
         if (search.lower()  in split_name):
             name = i[0]
             url = i[1]
-            p = p
-            if c == 10:
-                p += 1
-                c = 1
-            else:
-                c += 1
-            p_list.append((name, url, p))
+            full_world_list.append((name, url))
         elif test and  (search.lower() not in split_name):
             name = i[0]
             url = i[1]
-            p = p
-            if c == 10:
-                p += 1
-                c = 1
-            else:
-                c += 1
-            p_list.append((name, url, p))
+            one_character_list.append((name, url, p))
         else:
             pass
-
-
+        for i in full_world_list:
+            p_list.append(i)
+        for i in one_character_list:
+            p_list.append(one_character_list)
     requested_data = []
     p = 1
     c = 1
