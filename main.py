@@ -80,6 +80,7 @@ class Actor(UserMixin, db.Model):
                         nullable=False)
 
 
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -99,7 +100,13 @@ class MovieForm(FlaskForm):
 @app.route("/")
 @login_required
 def main():
-    return redirect(url_for("discover", page=1, content="movie"))
+    all_names = []
+    tabeles = (Actor, Model, Movie, Tv)
+    for i in tabeles:
+        data = db.session.query(i).filter_by(user_id=current_user.id).all()
+        for n in data:
+            all_names.append(n.name)
+    return redirect(url_for("discover", names=all_names, page=1, content="movie"))
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -264,6 +271,12 @@ def add():
 @app.route("/discover/<content>/<int:page>")
 @login_required
 def discover(page, content):
+    all_names = []
+    tabeles = (Actor, Model, Movie, Tv)
+    for i in tabeles:
+        data = db.session.query(i).filter_by(user_id=current_user.id).all()
+        for n in data:
+            all_names.append(n.name)
     if page is None:
         page = 1
     if content is None:
@@ -304,7 +317,7 @@ def discover(page, content):
         end = page + 10
 
     r = range(start, end)
-    return render_template("index.html", r=r, page=page, content=content, movies=data, nimg=NIMG, img=IMG)
+    return render_template("index.html", names=all_names, r=r, page=page, content=content, movies=data, nimg=NIMG, img=IMG)
 
 
 @app.route("/movies")
@@ -359,6 +372,27 @@ def model():
 def logout():
     logout_user()
     return redirect("login")
+
+
+@app.route("/details/<media>")
+@login_required
+def details(media):
+    if media == "movie":
+        movie_id = request.args.get("id")
+        data = api_movie.movie_data(movie_id)
+        images = api_movie.movie_image_data(movie_id)
+        videos = api_movie.movie_video_data(
+            movie_id)
+        return render_template("details.html", images=images, movie=data, videos=videos)
+    elif media == 'tv':
+        movie_id = request.args.get("id")
+        data = api_movie.tv_data(movie_id)
+        images = api_movie.tv_image_data(movie_id)
+        videos = api_movie.tv_video_data(
+            movie_id)
+        return render_template("details.html", images=images, movie=data, videos=videos)
+
+    return render_template("details.html")
 
 
 if __name__ == "__main__":

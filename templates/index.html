@@ -33,8 +33,30 @@
 <div class="container text-center">
     <div class="row">
         {% for m in movies %}
+
         <div class="col-md-4 col-sm-4 col-lg-4">
-            <div class="card overflow-hidden shadow border-start-0 border-top-0 border-2 border-light ">
+
+            {% if m[0] in names %}
+             <div class="card  overflow-hidden shadow border-start-0 border-top-0 border-2 border-success ">
+                {% if m[1] and m[1] != nimg %}
+                <img src="{{ m[1] }}" class="card-img-top" alt="Movie image">
+                {% elif m[1] == nimg %}
+                <img src="{{img}}" class="card-img-top" alt="Movie image">
+                {% endif %}
+                <div class="card-body">
+                   {% if request.path.startswith("/discover/model/")    %}
+                    <h5 class="card-title">{{m[0]}}</h5>
+                    <a href="{{ url_for('model') }}" class="btn btn-outline-light">collection</a>
+                   {% else %}
+                    <h5 class="card-title">{{m[0]}}<span class="rating" ><b> '{{m[3]}}'</b></span></h5>
+                    <a href="{{ url_for(m[4]) }}" class="btn btn-outline-light">collection</a>
+                     <a href="{{ url_for('details', media=m[4], id=m[2]) }}" class="btn btn-outline-light">Details</a>
+                    {% endif %}
+                </div>
+             </div>
+
+             {% else %}
+            <div class="card  overflow-hidden shadow border-start-0 border-top-0 border-2 border-light ">
                 {% if m[1] and m[1] != nimg %}
                 <img src="{{ m[1] }}" class="card-img-top" alt="Movie image">
                 {% elif m[1] == nimg %}
@@ -47,9 +69,11 @@
                    {% else %}
                     <h5 class="card-title">{{m[0]}}<span class="rating" ><b> '{{m[3]}}'</b></span></h5>
                     <a href="{{ url_for('add', media=m[4], movie_id=m[2]) }}" class="btn btn-outline-light">Save</a>
+                     <a href="{{ url_for('details', media=m[4], id=m[2]) }}" class="btn btn-outline-light">Details</a>
                     {% endif %}
                 </div>
             </div>
+             {% endif %}
         </div>
         {% endfor %}
 

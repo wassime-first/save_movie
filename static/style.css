@@ -8,7 +8,7 @@
 .container {
   margin:40px
 }
-h1 {
+ .details ,h1{
  margin-top : 1rem;
   font-family: "Anton", serif;
   display:inline-block;
@@ -16,9 +16,10 @@ border-bottom: 3px solid;
 border-image: linear-gradient(to right, #52D9DF, #69F8CD, #9DF869)1 ;
 padding-bottom: 5px;
 }
-h1:hover {
+.details:hover ,h1:hover {
  color: #52D9DF
 }
+
 sidebar {
   position: fixed;
   align: left;
@@ -74,5 +75,18 @@ sidebar {
 
 #footer p {
     font-size: 1.5rem;
+}
+
+.icon-ca {
+  color:white
+}
+#overview {
+  padding:100px 0 100px 0;
+  background-color:black
+}
+
+#images {
+  padding:100px 0 100px 0;
+  background-color:black
 }
 

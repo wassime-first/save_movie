@@ -6,6 +6,7 @@ load_dotenv()
 IMG = os.getenv("IMG")
 API_KEY = os.getenv("API_KEY")
 API_LONG_KEY = os.getenv("API_LONG_KEY")
+API_LONG_KEY_VIDEO = os.getenv("API_LONG_KEY_VIDEO")
 api_key = API_KEY
 api_long_key = API_LONG_KEY
 IMG_LINK = os.getenv("IMG_LINK")
@@ -40,10 +41,40 @@ def tv_data(id):
     response_movie = requests.get(url, headers=headers)
     data = response_movie.json()
     title = data["original_name"]
+    overview = data["overview"]
     release_date = data["last_air_date"]
     img_url = f'{IMG_LINK}{data["poster_path"]}'
-    return (title, release_date, img_url)
+    return (title, release_date, img_url, overview)
 
+def tv_image_data(id):
+    url = f"https://api.themoviedb.org/3/tv/{id}/images"
+    headers = {
+        "accept": "application/json",
+        "Authorization": f"{API_LONG_KEY_VIDEO}",
+    }
+
+    response = requests.get(url=url, headers=headers)
+    data = response.json()
+    images = []
+    for i in data["backdrops"]:
+        image_link = f"{IMG_LINK}{i['file_path']}"
+        images.append(image_link)
+    return images
+
+def tv_video_data(id):
+    url = f"https://api.themoviedb.org/3/tv/{id}/videos?language=en-US"
+    headers = {
+        "accept": "application/json",
+        "Authorization": f"{API_LONG_KEY_VIDEO}",
+    }
+
+    response = requests.get(url=url, headers=headers)
+    data = response.json()
+    videos = []
+    for i in data["results"]:
+        youtube_link = f"https://www.youtube.com/embed/{i['key']}"
+        videos.append(youtube_link)
+    return videos
 
 def search_movies(title, page):
     url_searsh = "https://api.themoviedb.org/3/search/movie"
@@ -72,6 +103,37 @@ def movie_data(id):
     overview = data["overview"]
     img_url = f'{IMG_LINK}{data["backdrop_path"]}'
     return (title, release_date, overview, img_url)
+
+def movie_video_data(id):
+    url = f"https://api.themoviedb.org/3/movie/{id}/videos?language=en-US"
+    headers = {
+        "accept": "application/json",
+        "Authorization": f"{API_LONG_KEY_VIDEO}",
+    }
+
+    response = requests.get(url=url, headers=headers)
+    data = response.json()
+    videos = []
+    for i in data["results"]:
+        youtube_link = f"https://www.youtube.com/embed/{i['key']}"
+        videos.append(youtube_link)
+    return videos
+
+def movie_image_data(id):
+    url = f"https://api.themoviedb.org/3/movie/{id}/images"
+    headers = {
+        "accept": "application/json",
+        "Authorization": f"{API_LONG_KEY_VIDEO}",
+    }
+
+    response = requests.get(url=url, headers=headers)
+    data = response.json()
+    images = []
+    for i in data["backdrops"]:
+        image_link = f"{IMG_LINK}{i['file_path']}"
+        images.append(image_link)
+    return images
+
 
 
 def search_all(title, page):
@@ -160,6 +222,6 @@ def discover_tv(page):
     return dicovery_list
 
 # print(tv_data(94605))
-
+# print(movie_video_data(939243))
 # print(movie_data("109445"))
 # print(discover_movies(1))
