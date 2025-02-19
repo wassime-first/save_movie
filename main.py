@@ -22,7 +22,7 @@ NIMG = "https://image.tmdb.org/t/p/originalNone"
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = f'{FLASK_KEY}'
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///library.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = f'{DB_URI}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 Bootstrap(app)
 login_manager = LoginManager(app)
