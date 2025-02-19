@@ -22,7 +22,7 @@ NIMG = "https://image.tmdb.org/t/p/originalNone"
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = f'{FLASK_KEY}'
-app.config['SQLALCHEMY_DATABASE_URI'] = f'{DB_URI}'
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///library.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 Bootstrap(app)
 login_manager = LoginManager(app)
@@ -100,13 +100,7 @@ class MovieForm(FlaskForm):
 @app.route("/")
 @login_required
 def main():
-    all_names = []
-    tabeles = (Actor, Model, Movie, Tv)
-    for i in tabeles:
-        data = db.session.query(i).filter_by(user_id=current_user.id).all()
-        for n in data:
-            all_names.append(n.name)
-    return redirect(url_for("discover", names=all_names, page=1, content="movie"))
+    return redirect(url_for("discover", page=1, content="movie"))
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -239,21 +233,21 @@ def add():
         if request.args.get("media") == "movie":
             movie_id = request.args.get("movie_id")
             movie_data = api_movie.movie_data(movie_id)
-            new_movie = Movie(name=movie_data[0], url=movie_data[3], user_id=current_user.id)
+            new_movie = Movie(id=movie_id, name=movie_data[0], url=movie_data[3], user_id=current_user.id)
             db.session.add(new_movie)
             db.session.commit()
             return redirect("/")
         elif request.args.get("media") == "tv":
             movie_id = request.args.get("movie_id")
             tv_data = api_movie.tv_data(movie_id)
-            new_movie = Tv(name=tv_data[0], url=tv_data[2], user_id=current_user.id)
+            new_movie = Tv(id=movie_id, name=tv_data[0], url=tv_data[2], user_id=current_user.id)
             db.session.add(new_movie)
             db.session.commit()
             return redirect("/")
         elif request.args.get("media") == "pp":
             movie_id = request.args.get("movie_id")
             movie_data = api_movie.ppl_data(movie_id)
-            new_movie = Actor(name=movie_data[0], url=movie_data[1], user_id=current_user.id)
+            new_movie = Actor(id=movie_id, name=movie_data[0], url=movie_data[1], user_id=current_user.id)
             db.session.add(new_movie)
             db.session.commit()
             return redirect("/")
@@ -377,15 +371,15 @@ def logout():
 @app.route("/details/<media>")
 @login_required
 def details(media):
-    if media == "movie":
-        movie_id = request.args.get("id")
+    if request.path.startswith('/details/movie') or media == "movie":
+        movie_id = request.args.get("movie_id")
         data = api_movie.movie_data(movie_id)
         images = api_movie.movie_image_data(movie_id)
         videos = api_movie.movie_video_data(
             movie_id)
         return render_template("details.html", images=images, movie=data, videos=videos)
-    elif media == 'tv':
-        movie_id = request.args.get("id")
+    elif request.path.startswith('/details/tv') or media == 'tv':
+        movie_id = request.args.get("movie_id")
         data = api_movie.tv_data(movie_id)
         images = api_movie.tv_image_data(movie_id)
         videos = api_movie.tv_video_data(

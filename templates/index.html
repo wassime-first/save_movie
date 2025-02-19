@@ -50,7 +50,7 @@
                    {% else %}
                     <h5 class="card-title">{{m[0]}}<span class="rating" ><b> '{{m[3]}}'</b></span></h5>
                     <a href="{{ url_for(m[4]) }}" class="btn btn-outline-light">collection</a>
-                     <a href="{{ url_for('details', media=m[4], id=m[2]) }}" class="btn btn-outline-light">Details</a>
+                     <a href="{{ url_for('details', media=m[4], movie_id=m[2]) }}" class="btn btn-outline-light">Details</a>
                     {% endif %}
                 </div>
              </div>
@@ -69,7 +69,7 @@
                    {% else %}
                     <h5 class="card-title">{{m[0]}}<span class="rating" ><b> '{{m[3]}}'</b></span></h5>
                     <a href="{{ url_for('add', media=m[4], movie_id=m[2]) }}" class="btn btn-outline-light">Save</a>
-                     <a href="{{ url_for('details', media=m[4], id=m[2]) }}" class="btn btn-outline-light">Details</a>
+                     <a href="{{ url_for('details', media=m[4], movie_id=m[2]) }}" class="btn btn-outline-light">Details</a>
                     {% endif %}
                 </div>
             </div>
