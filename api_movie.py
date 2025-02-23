@@ -44,7 +44,8 @@ def tv_data(id):
     overview = data["overview"]
     release_date = data["last_air_date"]
     img_url = f'{IMG_LINK}{data["poster_path"]}'
-    return (title, release_date, img_url, overview)
+    rating = data["vote_average"]
+    return (title, release_date, img_url, overview, rating)
 
 def tv_image_data(id):
     url = f"https://api.themoviedb.org/3/tv/{id}/images"
@@ -102,7 +103,8 @@ def movie_data(id):
     release_date = data["release_date"]
     overview = data["overview"]
     img_url = f'{IMG_LINK}{data["backdrop_path"]}'
-    return (title, release_date, overview, img_url)
+    rating = data["vote_average"]
+    return (title, release_date, overview, img_url, rating)
 
 def movie_video_data(id):
     url = f"https://api.themoviedb.org/3/movie/{id}/videos?language=en-US"
