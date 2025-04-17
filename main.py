@@ -12,6 +12,8 @@ from dotenv import load_dotenv
 import scraping
 from urllib.parse import unquote
 
+from flask_websites.movies.main import all_movies
+
 all_porn_stars = scraping.all_porn_stars()
 
 load_dotenv()
@@ -32,6 +34,7 @@ login_manager.login_view = "login"
 db = SQLAlchemy(app)
 db.echo = True
 
+""" tables """
 
 class User(UserMixin, db.Model):
     __tablename__ = "users_saves"
@@ -42,6 +45,17 @@ class User(UserMixin, db.Model):
     tvs = db.relationship("Tv", backref="user", cascade="all, delete, save-update")
     actors = db.relationship("Actor", backref="user", cascade="all, delete, save-update")
     movies = db.relationship("Movie", backref="user", cascade="all, delete, save-update")
+    custom = db.relationship("Custom", backref="user", cascade="all, delete, save-update")
+
+
+class Custom(UserMixin, db.Model):
+    __tablename__ = "users_custom"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    img_url = db.Column(db.String(1000), nullable=False)
+    watch_url = db.Column(db.String(1000), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users_saves.id", ondelete="CASCADE", onupdate="CASCADE"),
+                        nullable=False)
 
 
 class Model(UserMixin, db.Model):
@@ -91,11 +105,18 @@ class LoginForm(FlaskForm):
     password = PasswordField("Password", validators=[DataRequired()])
     submit = SubmitField("Submit")
 
+""" flask forms """
 
 class MovieForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])
     submit = SubmitField("Search")
 
+
+class CustomForm(FlaskForm):
+    name = StringField("Name", validators=[DataRequired()])
+    img = URLField("Img Url", validators=[DataRequired()])
+    watch = URLField("Watch Url", validators=[DataRequired()])
+    submit = SubmitField("Add")
 
 @app.route("/")
 @login_required
@@ -233,32 +254,48 @@ def add():
         if request.args.get("media") == "movie":
             movie_id = request.args.get("movie_id")
             movie_data = api_movie.movie_data(movie_id)
-            new_movie = Movie(id=movie_id, name=movie_data[0], url=movie_data[3], user_id=current_user.id)
-            db.session.add(new_movie)
-            db.session.commit()
-            return redirect("/")
+            all_movies = db.session.query(Movie).filter(Movie.user_id == current_user.id).all()
+            if int(movie_id) in [int(m.id) for m in all_movies]:
+                return redirect("/")
+            else:
+                new_movie = Movie(id=movie_id, name=movie_data[0], url=movie_data[3], user_id=current_user.id)
+                db.session.add(new_movie)
+                db.session.commit()
+                return redirect("/")
         elif request.args.get("media") == "tv":
             movie_id = request.args.get("movie_id")
             tv_data = api_movie.tv_data(movie_id)
-            new_movie = Tv(id=movie_id, name=tv_data[0], url=tv_data[2], user_id=current_user.id)
-            db.session.add(new_movie)
-            db.session.commit()
-            return redirect("/")
+            all_tv = db.session.query(Tv).filter(Tv.user_id == current_user.id).all()
+            if int(movie_id) in [int(m.id) for m in all_tv]:
+                return redirect("/")
+            else:
+                new_movie = Tv(id=movie_id, name=tv_data[0], url=tv_data[2], user_id=current_user.id)
+                db.session.add(new_movie)
+                db.session.commit()
+                return redirect("/")
         elif request.args.get("media") == "pp":
             movie_id = request.args.get("movie_id")
             movie_data = api_movie.ppl_data(movie_id)
-            new_movie = Actor(id=movie_id, name=movie_data[0], url=movie_data[1], user_id=current_user.id)
-            db.session.add(new_movie)
-            db.session.commit()
-            return redirect("/")
+            all_actors = db.session.query(Actor).filter(Actor.user_id == current_user.id).all()
+            if movie_data[0] in [m.name for m in all_actors]:
+                return redirect("/")
+            else:
+                new_movie = Actor(id=movie_id, name=movie_data[0], url=movie_data[1], user_id=current_user.id)
+                db.session.add(new_movie)
+                db.session.commit()
+                return redirect("/")
 
         elif request.args.get("media") == "model":
             model_name = unquote(request.args.get('n'))
             model_url = request.args.get("u")
-            new_movie = Model(name=model_name, url=model_url, user_id=current_user.id)
-            db.session.add(new_movie)
-            db.session.commit()
-            return redirect("/")
+            all_models = db.session.query(Model).filter(Model.user_id == current_user.id).all()
+            if model_name in [m.name for m in all_models]:
+                return redirect("/")
+            else:
+                new_movie = Model(name=model_name, url=model_url, user_id=current_user.id)
+                db.session.add(new_movie)
+                db.session.commit()
+                return redirect("/")
     return render_template("search.html", nimg=NIMG, img=IMG)
 
 
@@ -362,6 +399,28 @@ def model():
     return render_template("movies.html", model=all_models)
 
 
+@app.route("/custom", methods=["POST", "GET"])
+@login_required
+def custom():
+    form = CustomForm()
+    all_custom = db.session.query(Custom).filter(Custom.user_id == current_user.id).all()
+    if form.validate_on_submit():
+        name = form.name.data
+        img = form.img.data
+        watch = form.watch.data
+        new_custom = Custom(name=name, img_url=img, watch_url=watch, user_id=current_user.id)
+        db.session.add(new_custom)
+        db.session.commit()
+        return redirect("custom")
+    if "custom_id" in request.args:
+        deleted_custom = db.session.query(Custom).filter(Custom.id == request.args.get("custom_id")).first()
+        db.session.delete(deleted_custom)
+        db.session.commit()
+        return redirect("custom")
+    if "add" in request.args:
+        return render_template("custom.html", form=form)
+    return render_template( "movies.html", custom=all_custom)
+
 @app.route("/logout")
 def logout():
     logout_user()
@@ -392,4 +451,4 @@ def details(media):
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-    app.run()
+    app.run(debug=True)

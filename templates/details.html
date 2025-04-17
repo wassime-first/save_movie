@@ -19,7 +19,7 @@
 
 <section id="trailer">
 
-    <div id="carouselExampleFade" class="carousel slide carousel-fade" data-bs-ride="carousel">
+    <div id="topcarousel" class="carousel slide carousel-fade"  data-bs-interval="false">
         <div class="carousel-inner">
             <div class="carousel-item active">
                 {% if media == 'movie' %}
@@ -39,11 +39,11 @@
             </div>
             {% endfor %}
         </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="prev">
+        <button class="carousel-control-prev" type="button" data-bs-target="#topcarousel" data-bs-slide="prev">
             <span class="carousel-control-prev-icon icon-cr" aria-hidden="true"></span>
             <span class="visually-hidden">Previous</span>
         </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="next">
+        <button class="carousel-control-next" type="button" data-bs-target="#topcarousel" data-bs-slide="next">
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Next</span>
         </button>
@@ -72,7 +72,7 @@
     <div class="text-center">
         <h1 style="margin-left:30px;"> Images </h1>
     </div>
-    <div id="images-carousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+    <div id="image-carousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
         <div class="carousel-inner">
             <div class="carousel-item active">
                 <img src="{{ movie[3] }}" class="d-block w-100">
@@ -83,11 +83,11 @@
             </div>
             {% endfor %}
         </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="prev">
+        <button class="carousel-control-prev" type="button" data-bs-target="#image-carousel" data-bs-slide="prev">
             <span class="carousel-control-prev-icon icon-cr" aria-hidden="true"></span>
             <span class="visually-hidden">Previous</span>
         </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="next">
+        <button class="carousel-control-next" type="button" data-bs-target="#image-carousel" data-bs-slide="next">
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Next</span>
         </button>

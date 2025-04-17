@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 import pandas as pd
-from websocket import isEnabledForDebug
+# from websocket import isEnabledForDebug
 
 
 def response(page):

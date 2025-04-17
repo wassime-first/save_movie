@@ -17,6 +17,8 @@
     <title>My Celeb</title>
     {% elif tv%}
     <title>My Tv</title>
+    {% elif request.path.endswith('custom') %}
+    <title>My Custom</title>
     {% else %}
     <title>My +18</title>
 
@@ -89,12 +91,30 @@
             </div>
         </div>
         {% endfor %}
+
+        <!--      custom section   -->
+        {% elif custom %}
+        {% for m in custom %}
+        <div class="col-md-4 col-sm-4 col-lg-4">
+            <div class="card overflow-hidden shadow border-start-0 border-top-0 border-2 border-light">
+                <img src="{{ m.img_url }}" class="card-img-top" alt="model img">
+                <div class="card-body">
+                    <h5 class="card-title">{{ m.name }}</h5>
+                    <a href="{{m.watch_url}}" target="_blank" class="btn btn-outline-warning b "> Watch</a>
+                    <a href="{{ url_for('custom', custom_id=m.id) }}" class="btn btn-outline-danger">Delete</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
         {% endif %}
     </div>
 
 </div>
+{% if request.path.endswith('custom') %}
+<a href="{{ url_for('custom', add=True) }}" class="btn btn-outline-warning b"> ADD </a>
+{% else %}
 <a href="{{ url_for('add') }}" class="btn btn-outline-warning b"> ADD </a>
-
+{% endif %}
 {% include "footer.html"%}
 
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
