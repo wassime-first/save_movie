@@ -35,7 +35,7 @@ def game_data(id):
     overview = re.sub(r'<[^>]*>', '', data["description"])
     release_date = data["released"]
     img_url = data["background_image"]
-    metacritic = data["metacritic"]
+    metacritic = f'"{(2*int(data["rating"]))}"'
     return (title, release_date, img_url, overview, metacritic)
 
 def game_trailers(id):
@@ -50,4 +50,20 @@ def game_trailers(id):
         d = (i["data"]["max"])
         trailers.append(d)
     return trailers
+
+def discover_games(page):
+    url = "https://api.rawg.io/api/games/lists/main"
+    params = {
+        "key": GAME_API_KEY,
+        "page": page,
+        "page_size": 10,
+        "ordering": "-rating",
+    }
+    response_discover = requests.get(url, params=params)
+    data = response_discover.json()
+    game_list = []
+    for game in data["results"]:
+        d = (f"{game['name']} - {game['released']}", game["background_image"], game["id"], (2*int(game["rating"])), "game")
+        game_list.append(d)
+    return game_list
 

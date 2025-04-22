@@ -31,7 +31,7 @@
             {% for v in videos %}
             <div class="carousel-item">
                 {% if media == 'game' or request.path.startswith("/details/game") %}
-                <video width="640" height="360" controls>
+                <video width="640" height="360" controls class="d-block w-100">
                     <source src="{{ v }}" type="video/webm">
                     <source src="{{ v }}" type="video/ogg">
                 <source src="{{ v }}" type="video/mp4">

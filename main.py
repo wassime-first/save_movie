@@ -24,7 +24,7 @@ NIMG = "https://image.tmdb.org/t/p/originalNone"
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = f'{FLASK_KEY}'
-app.config['SQLALCHEMY_DATABASE_URI'] = f'{DB_URI}'
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///library.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 Bootstrap(app)
 login_manager = LoginManager(app)
@@ -285,46 +285,46 @@ def add():
             movie_data = api_movie.movie_data(movie_id)
             all_movies = db.session.query(Movie).filter(Movie.user_id == current_user.id).all()
             if int(movie_id) in [int(m.id) for m in all_movies]:
-                return redirect("/")
+                return redirect(url_for("add", s="movie"))
             else:
                 new_movie = Movie(id=movie_id, name=movie_data[0], url=movie_data[3], user_id=current_user.id)
                 db.session.add(new_movie)
                 db.session.commit()
-                return redirect("/")
+                return redirect(url_for("add", s="movie"))
         elif request.args.get("media") == "tv":
             movie_id = request.args.get("movie_id")
             tv_data = api_movie.tv_data(movie_id)
             all_tv = db.session.query(Tv).filter(Tv.user_id == current_user.id).all()
             if int(movie_id) in [int(m.id) for m in all_tv]:
-                return redirect("/")
+                return redirect(url_for("add", s="series"))
             else:
                 new_movie = Tv(id=movie_id, name=tv_data[0], url=tv_data[2], user_id=current_user.id)
                 db.session.add(new_movie)
                 db.session.commit()
-                return redirect("/")
+                return redirect(url_for("add", s="series"))
         elif request.args.get("media") == "pp":
             movie_id = request.args.get("movie_id")
             movie_data = api_movie.ppl_data(movie_id)
             all_actors = db.session.query(Actor).filter(Actor.user_id == current_user.id).all()
             if movie_data[0] in [m.name for m in all_actors]:
-                return redirect("/")
+                return redirect(url_for("add", s="actors"))
             else:
                 new_movie = Actor(id=movie_id, name=movie_data[0], url=movie_data[1], user_id=current_user.id)
                 db.session.add(new_movie)
                 db.session.commit()
-                return redirect("/")
+                return redirect(url_for("add", s="actors"))
 
         elif request.args.get("media") == "model":
             model_name = unquote(request.args.get('n'))
             model_url = request.args.get("u")
             all_models = db.session.query(Model).filter(Model.user_id == current_user.id).all()
             if model_name in [m.name for m in all_models]:
-                return redirect("/")
+                return redirect(url_for("add", s="model"))
             else:
                 new_movie = Model(name=model_name, url=model_url, user_id=current_user.id)
                 db.session.add(new_movie)
                 db.session.commit()
-                return redirect("/")
+                return redirect(url_for("add", s="model"))
 
         elif request.args.get("media") == "game":
             movie_id = request.args.get("movie_id")
@@ -332,12 +332,12 @@ def add():
             game_url = request.args.get("u")
             all_games = db.session.query(Game).filter(Game.user_id == current_user.id).all()
             if int(movie_id) in [int(m.id) for m in all_games]:
-                return redirect("/")
+                return redirect(url_for("add", s="games"))
             else:
                 new_game = Game(id=movie_id, name=game_name, url=game_url, user_id=current_user.id)
                 db.session.add(new_game)
                 db.session.commit()
-                return redirect("/")
+                return redirect(url_for("add", s="games"))
 
     return render_template("search.html", nimg=NIMG, img=IMG)
 
@@ -346,7 +346,7 @@ def add():
 @login_required
 def discover(page, content):
     all_names = []
-    tabeles = (Actor, Model, Movie, Tv)
+    tabeles = (Actor, Model, Movie, Tv, Game)
     for i in tabeles:
         data = db.session.query(i).filter_by(user_id=current_user.id).all()
         for n in data:
@@ -362,6 +362,9 @@ def discover(page, content):
     elif content == "tv":
         data = api_movie.discover_tv(page)
         content = "tv"
+    elif content == "game":
+        data = games_api.discover_games(page)
+        content = "game"
     else:
         data = scraping.all_porn_stars(page)
         content = "model"
