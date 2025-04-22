@@ -11,8 +11,8 @@ import os
 from dotenv import load_dotenv
 import scraping
 from urllib.parse import unquote
+import games_api
 
-from flask_websites.movies.main import all_movies
 
 all_porn_stars = scraping.all_porn_stars()
 
@@ -46,6 +46,7 @@ class User(UserMixin, db.Model):
     actors = db.relationship("Actor", backref="user", cascade="all, delete, save-update")
     movies = db.relationship("Movie", backref="user", cascade="all, delete, save-update")
     custom = db.relationship("Custom", backref="user", cascade="all, delete, save-update")
+    games = db.relationship("Game", backref="user", cascade="all, delete, save-update")
 
 
 class Custom(UserMixin, db.Model):
@@ -93,7 +94,13 @@ class Actor(UserMixin, db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("users_saves.id", ondelete="CASCADE", onupdate="CASCADE"),
                         nullable=False)
 
-
+class Game(UserMixin, db.Model):
+    __tablename__ = "games"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    url = db.Column(db.String(100), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users_saves.id", ondelete="CASCADE", onupdate="CASCADE"),
+                        nullable=False)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -152,7 +159,7 @@ def add():
             if request.method == "POST":
                 movie_name = request.form.get("movie")
                 if request.args.get("page"):
-                    page = request.args.ge('page')
+                    page = request.args.get('page')
                     movie_data = api_movie.search_movies(movie_name, page)
                     return render_template("search.html", page=page, name=movie_name, s="movie", movie=movie_data,
                                            nimg=NIMG, img=IMG)
@@ -230,6 +237,28 @@ def add():
                 return render_template("search.html", page=page, name=model_name, s="model", models=movie_data,
                                        nimg=NIMG, img=IMG)
             return render_template("search.html", s="model")
+
+        elif request.args.get("s") == "games":
+            if request.method == "POST":
+                game_name = request.form.get("movie")
+                if "page" in request.args:
+                    page = int(request.args.get("page"))
+                    tv_data = games_api.search_games(game_name, page)
+                    return render_template("search.html", name=game_name, page=page, s="games", game=tv_data, nimg=NIMG,
+                                           img=IMG)
+                else:
+                    page = 1
+                    tv_data = games_api.search_games(game_name, page)
+                    return render_template("search.html", name=game_name, page=page, s="games", game=tv_data, nimg=NIMG,
+                                           img=IMG)
+            elif "page" and "name" in request.args:
+                page = int(request.args.get("page"))
+                game_name = request.args.get("name")
+                tv_data = games_api.search_games(game_name, page)
+                return render_template("search.html", name=game_name, page=page, s="games", game=tv_data, nimg=NIMG,
+                                           img=IMG)
+        return render_template("search.html", s="games")
+
     else:
         if request.method == "POST":
             search = request.form.get("movie")
@@ -296,6 +325,20 @@ def add():
                 db.session.add(new_movie)
                 db.session.commit()
                 return redirect("/")
+
+        elif request.args.get("media") == "game":
+            movie_id = request.args.get("movie_id")
+            game_name = unquote(request.args.get('n'))
+            game_url = request.args.get("u")
+            all_games = db.session.query(Game).filter(Game.user_id == current_user.id).all()
+            if int(movie_id) in [int(m.id) for m in all_games]:
+                return redirect("/")
+            else:
+                new_game = Game(id=movie_id, name=game_name, url=game_url, user_id=current_user.id)
+                db.session.add(new_game)
+                db.session.commit()
+                return redirect("/")
+
     return render_template("search.html", nimg=NIMG, img=IMG)
 
 
@@ -398,6 +441,16 @@ def model():
         return redirect("/models")
     return render_template("movies.html", model=all_models)
 
+@app.route("/game", methods=["POST", "GET"])
+@login_required
+def game():
+    all_games = db.session.query(Game).filter(Game.user_id == current_user.id).all()
+    if "game_id" in request.args:
+        deleted_movie = db.session.query(Game).filter(Game.id == request.args.get("game_id")).first()
+        db.session.delete(deleted_movie)
+        db.session.commit()
+        return redirect("/game")
+    return render_template("movies.html", game=all_games)
 
 @app.route("/custom", methods=["POST", "GET"])
 @login_required
@@ -443,6 +496,13 @@ def details(media):
         images = api_movie.tv_image_data(movie_id)
         videos = api_movie.tv_video_data(
             movie_id)
+        return render_template("details.html", images=images, movie=data, videos=videos)
+    elif request.path.startswith('/details/game') or media == 'game':
+        movie_id = request.args.get("movie_id")
+        data = games_api.game_data(movie_id)
+        images = data[2]
+        videos = games_api.game_trailers(
+            int(movie_id))
         return render_template("details.html", images=images, movie=data, videos=videos)
 
     return render_template("details.html")

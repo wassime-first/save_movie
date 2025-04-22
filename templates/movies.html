@@ -19,6 +19,8 @@
     <title>My Tv</title>
     {% elif request.path.endswith('custom') %}
     <title>My Custom</title>
+    {% elif game %}
+    <title>My Games</title>
     {% else %}
     <title>My +18</title>
 
@@ -102,6 +104,21 @@
                     <h5 class="card-title">{{ m.name }}</h5>
                     <a href="{{m.watch_url}}" target="_blank" class="btn btn-outline-warning b "> Watch</a>
                     <a href="{{ url_for('custom', custom_id=m.id) }}" class="btn btn-outline-danger">Delete</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        <!--      game section   -->
+        {% elif game %}
+        {% for m in game %}
+        <div class="col-md-4 col-sm-4 col-lg-4">
+            <div class="card overflow-hidden shadow border-start-0 border-top-0 border-2 border-light">
+                <img src="{{ m.url }}" class="card-img-top" alt="model img">
+                <div class="card-body">
+                    <h5 class="card-title">{{ m.name }}</h5>
+                    <a href="{{ url_for('details', media='game', movie_id=m.id) }}" class="btn btn-outline-light">Details</a>
+                    <a href="{{ url_for('game', game_id=m.id) }}" class="btn btn-outline-danger">Delete</a>
                 </div>
             </div>
         </div>

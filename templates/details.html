@@ -30,12 +30,22 @@
             </div>
             {% for v in videos %}
             <div class="carousel-item">
+                {% if media == 'game' or request.path.startswith("/details/game") %}
+                <video width="640" height="360" controls>
+                    <source src="{{ v }}" type="video/webm">
+                    <source src="{{ v }}" type="video/ogg">
+                <source src="{{ v }}" type="video/mp4">
+                alawi abib kalbi
+                </video>
+
+
+                {% else %}
                 <iframe width="500px" height="500px" class="d-block w-100"
                         src="{{ v }}"
                         title="YouTube video player" frameborder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-
+                {% endif %}
             </div>
             {% endfor %}
         </div>
@@ -60,7 +70,7 @@
         <h4 class="details"> Release date: {{ movie[1] }} </h4>
         <br>
         <h5 class="details"> Overview </h5>
-        {% if request.path.startswith("/details/tv") %}
+        {% if request.path.startswith("/details/tv") or request.path.startswith("/details/game") %}
         <p> {{ movie[3] }} </p>
         {%else%}
         <p> {{ movie[2] }} </p>
@@ -74,7 +84,12 @@
     </div>
     <div id="image-carousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
         <div class="carousel-inner">
+            {% if media == 'game' or request.path.startswith("/details/game") %}
             <div class="carousel-item active">
+                <img src="{{ movie[2] }}" class="d-block w-100">
+            </div>
+            {% else %}
+             <div class="carousel-item active">
                 <img src="{{ movie[3] }}" class="d-block w-100">
             </div>
             {% for i in images %}
@@ -82,6 +97,7 @@
                 <img src="{{ i }}" class="d-block w-100">
             </div>
             {% endfor %}
+            {% endif %}
         </div>
         <button class="carousel-control-prev" type="button" data-bs-target="#image-carousel" data-bs-slide="prev">
             <span class="carousel-control-prev-icon icon-cr" aria-hidden="true"></span>
@@ -94,9 +110,15 @@
     </div>
 </section>
 
+{% if request.path.startswith("/details/game") %}
+<div style="background-color:black" class="text-center">
+    <a href="https://www.google.com/search?q={{movie[0]}}" target="_blank" class="btn btn-outline-warning b "> More </a>
+</div>
+{% else %}
 <div style="background-color:black" class="text-center">
     <a href="https://egydead.fyi/?s={{movie[0]}}" target="_blank" class="btn btn-outline-warning b "> Watch </a>
 </div>
+{% endif %}
 <section id="footer" class="text-center">
     {% include "footer.html"%}
 
