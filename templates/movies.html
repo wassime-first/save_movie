@@ -129,8 +129,16 @@
 </div>
 {% if request.path.endswith('custom') %}
 <a href="{{ url_for('custom', add=True) }}" class="btn btn-outline-warning b"> ADD </a>
-{% else %}
-<a href="{{ url_for('add') }}" class="btn btn-outline-warning b"> ADD </a>
+{% elif request.path.endswith('game') %}
+<a href="{{ url_for('add', s='games') }}" class="btn btn-outline-warning b"> ADD </a>
+{% elif request.path.endswith('movies') %}
+<a href="{{ url_for('add', s='movie') }}" class="btn btn-outline-warning b"> ADD </a>
+{% elif request.path.endswith('tv') %}
+<a href="{{ url_for('add', s='series') }}" class="btn btn-outline-warning b"> ADD </a>
+{% elif request.path.endswith('actors') %}
+<a href="{{ url_for('add', s='actors') }}" class="btn btn-outline-warning b"> ADD </a>
+{% elif request.path.endswith('models') %}
+<a href="{{ url_for('add', s='model') }}" class="btn btn-outline-warning b"> ADD </a>
 {% endif %}
 {% include "footer.html"%}
 
