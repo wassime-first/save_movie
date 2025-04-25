@@ -194,6 +194,15 @@ def ppl_data(id):
     img_url = f'{IMG_LINK}{data["profile_path"]}'
     return (name, img_url)
 
+def ppl_image_data(id):
+    url_movie = f"https://api.themoviedb.org/3/person/{id}/images"
+    response_movie = requests.get(url_movie, headers=headers)
+    data = response_movie.json()
+    images = []
+    for i in data["profiles"]:
+        image_link = f"{IMG_LINK}{i['file_path']}"
+        images.append(image_link)
+    return images
 
 def discover_movies(page):
     url = f"https://api.themoviedb.org/3/discover/movie?include_adult=true&include_video=false&language=en-US&page={page}&sort_by=popularity.desc"
@@ -227,3 +236,4 @@ def discover_tv(page):
 # print(movie_video_data(939243))
 # print(movie_data("109445"))
 # print(discover_movies(1))
+# print(ppl_image_data(11701))

@@ -51,13 +51,26 @@ def game_trailers(id):
         trailers.append(d)
     return trailers
 
+def game_screenshots(id):
+    url = f"https://api.rawg.io/api/games/{id}/screenshots"
+    params = {
+        "key": GAME_API_KEY,
+    }
+    response_game = requests.get(url, params=params)
+    data = response_game.json()
+    screenshots = []
+    for i in data["results"]:
+        d = (i["image"])
+        screenshots.append(d)
+    return screenshots
+
 def discover_games(page):
-    url = "https://api.rawg.io/api/games/lists/main"
+    url = "https://api.rawg.io/api/games"
     params = {
         "key": GAME_API_KEY,
         "page": page,
-        "page_size": 10,
-        "ordering": "-rating",
+        "page_size": 21,
+        # "ordering": "-metacritic",
     }
     response_discover = requests.get(url, params=params)
     data = response_discover.json()
@@ -66,4 +79,6 @@ def discover_games(page):
         d = (f"{game['name']} - {game['released']}", game["background_image"], game["id"], (2*int(game["rating"])), "game")
         game_list.append(d)
     return game_list
+
+
 

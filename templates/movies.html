@@ -45,7 +45,8 @@
                 <div class="card-body">
                     <h5 class="card-title">{{ m.name }}</h5>
                     <a href="{{ url_for('details', media='movie', movie_id=m.id) }}" class="btn btn-outline-light">Details</a>
-                    <a href="https://egydead.fyi/?s={{m.name}}" target="_blank" class="btn btn-outline-warning b "> Watch </a>
+                    <a href="https://egydead.fyi/?s={{m.name}}" target="_blank" class="btn btn-outline-warning b ">
+                        Watch </a>
                     <a href="{{ url_for('movie', movie_id=m.id) }}" class="btn btn-outline-danger">Delete</a>
                 </div>
             </div>
@@ -59,8 +60,10 @@
                 <img src="{{ m.url }}" class="card-img-top" alt="test">
                 <div class="card-body">
                     <h5 class="card-title">{{ m.name }}</h5>
-                    <a href="{{ url_for('details', media='tv', movie_id=m.id) }}" class="btn btn-outline-light">Details</a>
-                    <a href="https://egydead.fyi/?s={{m.name}}" target="_blank" class="btn btn-outline-warning b "> Watch </a>
+                    <a href="{{ url_for('details', media='tv', movie_id=m.id) }}"
+                       class="btn btn-outline-light">Details</a>
+                    <a href="https://egydead.fyi/?s={{m.name}}" target="_blank" class="btn btn-outline-warning b ">
+                        Watch </a>
                     <a href="{{ url_for('tv', movie_id=m.id) }}" class="btn btn-outline-danger">Delete</a>
                 </div>
             </div>
@@ -71,10 +74,30 @@
         {% for m in actor %}
         <div class="col-md-4 col-sm-4 col-lg-4">
             <div class="card overflow-hidden shadow border-start-0 border-top-0 border-2 border-light">
-                <img src="{{ m.url }}" class="card-img-top" alt="test">
+
+                <div id="carousel{{ m[0].id }}" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        {% for img in m[1] %}
+                        <div class="carousel-item {% if loop.first %}active{% endif %}">
+                            <img src="{{ img }}" class="d-block w-100" alt="Image for {{ m[0].name }}">
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carousel{{ m[0].id }}"
+                            data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon"></span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carousel{{ m[0].id }}"
+                            data-bs-slide="next">
+                        <span class="carousel-control-next-icon"></span>
+                    </button>
+                </div>
+
                 <div class="card-body">
-                    <h5 class="card-title">{{ m.name }}</h5>
-                    <a href="{{ url_for('actor', movie_id=m.id) }}" class="btn btn-outline-danger">Delete</a>
+                    <h5 class="card-title">{{ m[0].name }}</h5>
+                    <a href="https://www.google.com/search?q={{ m[0].name }}" target="_blank"
+                       class="btn btn-outline-warning">More</a>
+                    <a href="{{ url_for('actor', movie_id=m[0].id) }}" class="btn btn-outline-danger">Delete</a>
                 </div>
             </div>
         </div>
@@ -87,7 +110,8 @@
                 <img src="{{ m.url }}" class="card-img-top" alt="model img">
                 <div class="card-body">
                     <h5 class="card-title">{{ m.name }}</h5>
-                    <a href="https://www.youporn.com/search/?query={{m.name}}" target="_blank" class="btn btn-outline-warning b "> Watch</a>
+                    <a href="https://www.youporn.com/search/?query={{m.name}}" target="_blank"
+                       class="btn btn-outline-warning b "> Watch</a>
                     <a href="{{ url_for('model', movie_id=m.id) }}" class="btn btn-outline-danger">Delete</a>
                 </div>
             </div>

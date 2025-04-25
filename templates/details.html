@@ -88,6 +88,11 @@
             <div class="carousel-item active">
                 <img src="{{ movie[2] }}" class="d-block w-100">
             </div>
+             {% for i in images %}
+            <div class="carousel-item">
+                <img src="{{ i }}" class="d-block w-100">
+            </div>
+            {% endfor %}
             {% else %}
              <div class="carousel-item active">
                 <img src="{{ movie[3] }}" class="d-block w-100">

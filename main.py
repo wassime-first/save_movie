@@ -425,12 +425,16 @@ def tv():
 @login_required
 def actor():
     all_actors = db.session.query(Actor).filter(Actor.user_id == current_user.id).all()
+    all = []
+    for a in all_actors:
+        images = api_movie.ppl_image_data(a.id)
+        all.append((a, images))
     if "movie_id" in request.args:
         deleted_movie = db.session.query(Actor).filter(Actor.id == request.args.get("movie_id")).first()
         db.session.delete(deleted_movie)
         db.session.commit()
         return redirect("/actors")
-    return render_template("movies.html", actor=all_actors)
+    return render_template("movies.html", actor=all)
 
 
 @app.route("/models")
@@ -503,7 +507,8 @@ def details(media):
     elif request.path.startswith('/details/game') or media == 'game':
         movie_id = request.args.get("movie_id")
         data = games_api.game_data(movie_id)
-        images = data[2]
+        images = games_api.game_screenshots(movie_id)
+
         videos = games_api.game_trailers(
             int(movie_id))
         return render_template("details.html", images=images, movie=data, videos=videos)
